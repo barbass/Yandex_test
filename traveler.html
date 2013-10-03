@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8" />
+		<title>Путешественник</title>
+		<script src="traveler.js"></script>
+	</head>
+
+<body>
+	<script type='text/javascript'>
+		window.onload = function() {
+			var cards = new Array(
+				{
+					'from': 'Barcelona',
+					'to': 'Gerona Airport',
+					'seat': '',
+					'type_transport': 'airport bus',
+				},
+				{
+					'from': 'Madrid',
+					'to': 'Barcelona',
+					'seat': '',
+					'type_transport': 'train',
+				},
+				{
+					'from': 'Gerona Airport',
+					'to': 'Stockholm',
+					'seat': '',
+					'type_transport': 'airplane',
+				},
+				{
+					'from': 'Stockholm',
+					'to': 'New York JFK',
+					'seat': '',
+					'type_transport': 'airplane',
+				}
+			);
+			traveler = new Traveler({'cards':cards});
+			traveler.buildTravelCard();
+			
+			//Добавление карточки в путешествие
+			try{
+				traveler.addCard({});
+			} catch(error) {
+				alert(error.message);
+			}
+		}
+	</script>
+	
+	<div id='travel'></div>
+	
+</body>
