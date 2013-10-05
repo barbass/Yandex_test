@@ -9,7 +9,37 @@
 <body>
 	<script type='text/javascript'>
 		window.onload = function() {
-			var cards = new Array(
+			//Url: www....
+			Array.prototype.shuffle = function( b ) {
+				var i = this.length, j, t;
+				while( i ) {
+					j = Math.floor( ( i-- ) * Math.random() );
+					t = b && typeof this[i].shuffle!=='undefined' ? this[i].shuffle() : this[i];
+					this[i] = this[j];
+					this[j] = t;
+				}
+				return this;
+			};
+			
+			var cards = new Array();
+			for(var i=0; i<500; i++) {
+				cards.push(
+					{
+						'from': 'AAA'+i,
+						'to': 'AAA'+(i+1),
+						'seat': '',
+						'type_transport': 'airplane',
+					}
+				);
+			}
+			
+			/*var cards = new Array(
+				{
+					'from': 'Stockholm',
+					'to': 'New York JFK',
+					'seat': '',
+					'type_transport': 'airplane',
+				},
 				{
 					'from': 'Barcelona',
 					'to': 'Gerona Airport',
@@ -27,26 +57,22 @@
 					'to': 'Stockholm',
 					'seat': '',
 					'type_transport': 'airplane',
-				},
-				{
-					'from': 'Stockholm',
-					'to': 'New York JFK',
-					'seat': '',
-					'type_transport': 'airplane',
 				}
-			);
-			traveler = new Traveler({'cards':cards});
+			);*/
+
+			traveler = new Traveler({'cards':cards.shuffle()});
 			traveler.buildTravelCard();
 			
 			//Добавление карточки в путешествие
-			try{
+			/*try{
 				traveler.addCard({});
 			} catch(error) {
 				alert(error.message);
-			}
+			}*/
+			
 		}
 	</script>
 	
 	<div id='travel'></div>
-	
+	<div id='travel2'></div>
 </body>

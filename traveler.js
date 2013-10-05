@@ -101,9 +101,12 @@ Traveler.prototype = {
 			throw new Exception('Нет карточек');
 			return false;
 		}
+		if (count_cards === 1) {
+			return this.options['cards'];
+		}
 		
-		var first_point = {};
-		var last_point = {};
+		var first_point = 0;
+		var last_point = 0;
 		for(var i=0; i<count_cards; i++) {
 			var from = 0;
 			var to = 0;
@@ -118,17 +121,17 @@ Traveler.prototype = {
 					from = 1;
 				}
 				//Находим конечная ли эта точка
-				if (this.options['cards'][i]['to'] === this.options['cards'][j]['from']) {
+				/*if (this.options['cards'][i]['to'] === this.options['cards'][j]['from']) {
 					to = 1;
-				}
+				}*/
 			}
 			
 			if (from === 0) {
 				first_point = i;
 			}
-			if (to === 0) {
+			/*if (to === 0) {
 				last_point = i;
-			}
+			}*/
 		}
 		
 		var now_point = first_point;
@@ -145,9 +148,76 @@ Traveler.prototype = {
 		return sort_cards;
 	},
 	
+	sort2: function() {
+		//Сортированный список карточек
+		var sort_cards = new Array();
+		
+		var count_cards = this.options['cards'].length;
+
+		//Проверяем не пустой ли список
+		if (count_cards === 0) {
+			throw new Exception('Нет карточек');
+			return false;
+		}
+		if (count_cards === 1) {
+			return this.options['cards'];
+		}
+		
+		por = new Array();
+		var first_point = 0;
+		var last_point = 0;
+		for(var i=0; i<count_cards; i++) {
+			var from = 0;
+			var to = 0;
+
+			for(var j=0; j<count_cards; j++) {
+				if (j === i) {
+					continue;
+				}
+				
+				//Находим начальная ли эта точка
+				if (this.options['cards'][i]['from'] === this.options['cards'][j]['to']) {
+					from = 1;
+					por.push(new Array(j, i));
+				}
+				//Находим конечная ли эта точка
+				/*if (this.options['cards'][i]['to'] === this.options['cards'][j]['from']) {
+					to = 1;
+				}*/
+			}
+			
+			if (from === 0) {
+				first_point = i;
+			}
+			/*if (to === 0) {
+				last_point = i;
+			}*/
+		}
+
+		var now_point = first_point;
+		for(var i=0; i<por.length; i++) {
+			for(var j=0; j<por.length; j++) {
+				if (now_point == por[j][0]) {
+					now_point = por[j][1];
+					break;
+				}
+			}
+			if (i === 0) {
+				sort_cards.push(this.options['cards'][por[j][0]]);
+				sort_cards.push(this.options['cards'][por[j][1]]);
+			} else {
+				sort_cards.push(this.options['cards'][por[j][1]]);
+			}
+		}
+		
+		return sort_cards;
+	},
+	
 	/* Построить карту путешествия */
 	buildTravelCard: function() {
+		console.time("sort");
 		var sort_cards = this.sort();
+		console.timeEnd("sort");
 		
 		var html = '<ul>';
 		for(var i=0; i<sort_cards.length; i++) {
@@ -158,7 +228,21 @@ Traveler.prototype = {
 			html += "</li>";
 		}
 		html += "</ul>";
-		
 		document.querySelector('#travel').innerHTML = html;
+		
+		console.time("sort2");
+		var sort_cards = this.sort2();
+		console.timeEnd("sort2");
+		
+		var html = '<ul>';
+		for(var i=0; i<sort_cards.length; i++) {
+			html += "<li>";
+			html += "Take <b>"+sort_cards[i]['type_transport']+"</b>";
+			html += " from <b>"+sort_cards[i]['from']+"</b>";
+			html += " to <b>"+sort_cards[i]['to']+"</b>";
+			html += "</li>";
+		}
+		html += "</ul>";
+		document.querySelector('#travel2').innerHTML = html;
 	}
 };
