@@ -9,7 +9,7 @@
 <body>
 	<script type='text/javascript'>
 		window.onload = function() {
-			//Url: www....
+			/* Url: www.... - перемешиваем массив */
 			Array.prototype.shuffle = function( b ) {
 				var i = this.length, j, t;
 				while( i ) {
@@ -21,14 +21,33 @@
 				return this;
 			};
 			
-			var cards = new Array();
-			for(var i=0; i<500; i++) {
+			cards = new Array();
+			/* Генерируем нужное количество */
+			for(var i=0; i<10; i++) {
 				cards.push(
 					{
 						'from': 'AAA'+i,
 						'to': 'AAA'+(i+1),
-						'seat': '',
-						'type_transport': 'airplane',
+						'seat': '5C',
+						'id': '',
+						'transport': 'airplane',
+						'options': {
+							'price': {
+								'name': 'Цена',
+								'description': '110р',
+								'display': true,
+							},
+							'baggage': {
+								'name': 'Багаж',
+								'description': 'Забрать в шлюзе',
+								'display': true,
+							},
+							'date_departure': {
+								'name': 'Дата отъезда',
+								'description': '06.10.2013',
+								'display': true,
+							},
+						},
 					}
 				);
 			}
@@ -61,7 +80,10 @@
 			);*/
 
 			traveler = new Traveler({'cards':cards.shuffle()});
+			
 			traveler.buildTravelCard();
+			
+			traveler.getCards({'transport':'airplane', 'options':{'key':'price', 'description':'100р'}});
 			
 			//Добавление карточки в путешествие
 			/*try{
