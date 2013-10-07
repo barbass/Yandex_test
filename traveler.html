@@ -8,82 +8,79 @@
 
 <body>
 	<script type='text/javascript'>
+		/* Url: www.... - перемешиваем массив */
+		Array.prototype.shuffle = function(b) {
+			var i = this.length, j, t;
+			while(i) {
+				j = Math.floor((i--) * Math.random());
+				t = (b && typeof(this[i].shuffle) !== 'undefined') ? this[i].shuffle() : this[i];
+				this[i] = this[j];
+				this[j] = t;
+			}
+			return this;
+		};
+		
 		window.onload = function() {
-			/* Url: www.... - перемешиваем массив */
-			Array.prototype.shuffle = function( b ) {
-				var i = this.length, j, t;
-				while( i ) {
-					j = Math.floor( ( i-- ) * Math.random() );
-					t = b && typeof this[i].shuffle!=='undefined' ? this[i].shuffle() : this[i];
-					this[i] = this[j];
-					this[j] = t;
-				}
-				return this;
-			};
+			var traveler = new Traveler();
+			var cards = [];
 			
-			cards = new Array();
-			/* Генерируем нужное количество */
-			for(var i=0; i<10; i++) {
-				cards.push(
-					{
-						'from': 'AAA'+i,
-						'to': 'AAA'+(i+1),
-						'seat': '5C',
-						'id': '',
-						'transport': 'airplane',
-						'options': {
-							'price': {
-								'name': 'Цена',
-								'description': '110р',
-								'display': true,
+			//Генерируем данные
+			function generate() {
+				cards = [];
+				
+				var count = parseInt(document.querySelector('#count_cards').value) | 0;
+				if (count < 0) {count = 10;}
+				
+				traveler.destroy();
+				
+				/* Генерируем нужное количество */
+				for(var i=0; i<count; i++) {
+					cards.push(
+						{
+							'from': 'AAA'+i,
+							'to': 'AAA'+(i+1),
+							'seat': '5C',
+							'transport': 'airplane',
+							'options': {
+								'price': {
+									'name': 'Цена',
+									'description': '110р',
+									'display': true,
+								},
+								'baggage': {
+									'name': 'Багаж',
+									'description': 'Забрать в шлюзе',
+									'display': true,
+								},
+								'date_departure': {
+									'name': 'Дата отъезда',
+									'description': '06.10.2013',
+									'display': true,
+								},
 							},
-							'baggage': {
-								'name': 'Багаж',
-								'description': 'Забрать в шлюзе',
-								'display': true,
-							},
-							'date_departure': {
-								'name': 'Дата отъезда',
-								'description': '06.10.2013',
-								'display': true,
-							},
-						},
-					}
-				);
+						}
+					);
+				}
+				
+				cards.shuffle();
+				
+				for(var i=0; i<count; i++) {
+					traveler.addCard(cards[i]);
+				}
+				traveler.buildCards();
 			}
 			
-			/*var cards = new Array(
-				{
-					'from': 'Stockholm',
-					'to': 'New York JFK',
-					'seat': '',
-					'type_transport': 'airplane',
-				},
-				{
-					'from': 'Barcelona',
-					'to': 'Gerona Airport',
-					'seat': '',
-					'type_transport': 'airport bus',
-				},
-				{
-					'from': 'Madrid',
-					'to': 'Barcelona',
-					'seat': '',
-					'type_transport': 'train',
-				},
-				{
-					'from': 'Gerona Airport',
-					'to': 'Stockholm',
-					'seat': '',
-					'type_transport': 'airplane',
-				}
-			);*/
-
-			traveler = new Traveler({'cards':cards.shuffle()});
+			document.querySelector('#generate_cards').addEventListener('click', function() {
+				generate();
+				document.querySelector('#parent_example').style.display = 'block';
+			}, false);
 			
-			traveler.buildTravelCard();
+			document.querySelector('#display_sort_cards').addEventListener('click', function() {
+				traveler.buildTravelCard();
+				document.querySelector('#parent_travel').style.display = 'block';
+			}, false);
 			
-			traveler.getCards({'transport':'airplane', 'options':{'key':'price', 'description':'100р'}});
+			//traveler.getCards({'transport':'airplane', 'options':{'key':'price', 'description':'100р'}});
 			
 			//Добавление карточки в путешествие
 			/*try{
@@ -95,6 +92,27 @@
 		}
 	</script>
 	
-	<div id='travel'></div>
-	<div id='travel2'></div>
+	<h3>Путешественник</h3>
+	
+	<p>
+		<input type='button' id='generate_cards' value='Сгенерировать данные'>
+		&nbsp;
+		<input type='button' id='display_sort_cards' value='Вывести результат'>
+	</p>
+	<p>
+		Количество карточек: <input type='number' id='count_cards' value='10'>
+	</p>
+	
+	<br>
+	<br>
+	
+	<div id='parent_example' style='display:none'>
+		<h2>Сгенерированные карточки</h2>
+		<div id='example'></div>
+	</div>
+	
+	<div id='parent_travel' style='display:none'>
+		<h2>Отсортированные карточки</h2>
+		<div id='travel'></div>
+	</div>
 </body>

@@ -1,3 +1,43 @@
+/*
+Карточка
+Пример:
+{
+	'from': 'AAA'+i,
+	'to': 'AAA'+(i+1),
+	'seat': '5C',
+	'transport': 'airplane',
+	'options': {
+		'price': {
+			'name': 'Цена',
+			'description': '110р',
+			'display': true,
+		},
+		'baggage': {
+			'name': 'Багаж',
+			'description': 'Забрать в шлюзе',
+			'display': true,
+		},
+		'date_departure': {
+			'name': 'Дата отъезда',
+			'description': '06.10.2013',
+			'display': true,
+		},
+	}
+}
+
+from - место отбытия (string)
+to - место назначения (string)
+seat - место посадки, может быть пустым значением (string)
+index - зарезервированное значение, содержит изначальный индекс карточки в отсортированном массиве (int)
+transport - тип транспорта (string)
+options - дополнительные параметры карточки, может быть пустым (object)
+Дополнительные параметры имеют тип object и должны содержать следующие параметры:
+	name - название параметра (string)
+	description - значение параметра или его описание (string)
+	display - должно ли оно отображаться пользователь (bool)
+	Отображение происходит в формате: options.name + '' + options.descrption
+*/
+
 function Traveler(options) {
 	options = (options) ? options : {};
 	this.init(options);
@@ -5,13 +45,13 @@ function Traveler(options) {
 
 Traveler.prototype = {
 	defaultOptions: {
-		cards: new Array(),
-		transports: new Array(),
+		cards: [],
+		transports: [],
 	},
 	options: {},
 	
 	transports: new Array('airplane', 'trane', 'bus', 'taxi'),
-	cards: new Array(),
+	cards: [],
 	
 	init: function(options) {
 		this.options = (options) ? options : {};
@@ -25,6 +65,13 @@ Traveler.prototype = {
 		
 		//TODO: можно добавить валидацию карточек
 		this.cards = this.options['cards'];
+	},
+	
+	/* Уничтожаем все данные */
+	destroy: function() {
+		this.options = {};
+		this.cards = [];
+		this.transports = [];
 	},
 	
 	/* Получить список карточек
@@ -132,7 +179,7 @@ Traveler.prototype = {
 	/* Валидация карточки 
 	 * @return bool
 	 * */
-	validate: function(card) {
+	validateCard: function(card) {
 		if (!card || typeof(card) != 'object') {
 			throw {name: 'Type', message: 'Не верный тип данных'};
 			return false;
@@ -154,7 +201,7 @@ Traveler.prototype = {
 	 * */
 	addCard: function(card) {
 		try {
-			this.validate(card);
+			this.validateCard(card);
 			this.cards.push(card);
 		} catch(error) {
 			throw error;
@@ -175,7 +222,7 @@ Traveler.prototype = {
 	/* Сортировка
 	 * @return array
 	 * */
-	sort: function() {
+	sortCards: function() {
 		//Сортированный список карточек
 		var sort_cards = new Array();
 
@@ -191,7 +238,7 @@ Traveler.prototype = {
 		}
 		
 		//Ассоциативный массив связей
-		depend = {};
+		var depend = {};
 		var first_point = 0;
 		for(var i=0; i<count_cards; i++) {
 			//Регитр для индекса, на который не ссылается ни одна карточка
@@ -229,43 +276,63 @@ Traveler.prototype = {
 			
 			now_point = depend[now_point]['s'];
 		}
-		a = sort_cards;
+
 		return sort_cards;
 	},
 	
-	/* Построить карту путешествия */
-	buildTravelCard: function() {
+	/* Построить html-список ul li
+	 * @param array
+	 * @return string
+	 * */
+	buildList: function(cards) {
+		var html = "";
+		
+		html += "<span title='Отобразить' style='cursor:pointer; font-weight:bold; font-size:20px;' onclick='this.parentNode.querySelector(\"ul.list\").style.display = \"block\" '>+</span>&nbsp;&nbsp;&nbsp;<span title='Скрыть' style='cursor:pointer; font-weight:bold; font-size:20px;' onclick='this.parentNode.querySelector(\"ul.list\").style.display = \"none\" '>-</span>";
+		html += '<ul class="list">';
 		var count_cards = this.getCountCards();
-
-		console.time("sort");
-		var sort_cards = this.sort();
-		console.timeEnd("sort");
-
-		var html = '<ul>';
 		for(var i=0; i<count_cards; i++) {
 			html += "<li>";
-			html += "Взять <b>"+sort_cards[i]['transport']+"</b>";
-			html += " из <b>"+sort_cards[i]['from']+"</b>";
-			html += " в <b>"+sort_cards[i]['to']+".</b>";
+			html += "Взять <b>"+cards[i]['transport']+"</b>";
+			html += " из <b>"+cards[i]['from']+"</b>";
+			html += " в <b>"+cards[i]['to']+".</b>";
 			
-			if (sort_cards[i]['seat'] && sort_cards[i]['seat'] !== '') {
-				html += " Место <b>"+sort_cards[i]['seat']+".</b>";
+			if (cards[i]['seat'] && cards[i]['seat'] !== '') {
+				html += " Место <b>"+cards[i]['seat']+".</b>";
 			} else {
 				html += " Место не указано.";
 			}
-			if (typeof(sort_cards[i]['options']) === 'object') {
-				for(var key in sort_cards[i]['options']) {
-					if (typeof(sort_cards[i]['options'][key]) !== 'object') {
+			if (typeof(cards[i]['options']) === 'object') {
+				for(var key in cards[i]['options']) {
+					if (typeof(cards[i]['options'][key]) !== 'object') {
 						continue;
 					}
-					if (sort_cards[i]['options'][key]['display']) {
-						html += " "+sort_cards[i]['options'][key]['name']+" <b>"+sort_cards[i]['options'][key]['description']+".</b>";
+					if (cards[i]['options'][key]['display']) {
+						html += " "+cards[i]['options'][key]['name']+" <b>"+cards[i]['options'][key]['description']+".</b>";
 					}
 				}
 			}
 			html += "</li>";
 		}
 		html += "</ul>";
-		document.querySelector('#travel2').innerHTML = html;
-	}
+		return html;
+	},
+	
+	/* Построить карту путешествия */
+	buildTravelCard: function() {
+		//console.time("sortCards");
+		var time_start = new Date().getMilliseconds();
+		var sort_cards = this.sortCards();
+		var time_end = new Date().getMilliseconds();
+		//console.timeEnd("sortCards");
+		
+		var html = "<p>Время сортировки: " + (time_end - time_start) + " ms</p>" + this.buildList(sort_cards);
+		document.querySelector('#travel').innerHTML = html;
+	},
+	
+	/* Отобразить карточки без сортировки */
+	buildCards: function() {
+		document.querySelector('#example').innerHTML = this.buildList(this.cards);
+	},
+	
+	
 };
