@@ -252,7 +252,7 @@ Traveler.prototype = {
 				//Если на карточу ссылаются
 				if (this.cards[i]['from'] === this.cards[j]['to']) {
 					from = 1;
-					depend[j] = {'f':j, 's':i};
+					depend[j] = {'from':j, 'to':i};
 				}
 			}
 			
@@ -267,14 +267,14 @@ Traveler.prototype = {
 		for(var i=0; i<depend_length; i++) {
 			if (i === 0) {
 				//Сохраняем оригинальный индекс для работы с отсортированным списком с доступом к оригинальным
-				this.cards[depend[now_point]['f']]['index'] = now_point;
-				sort_cards.push(this.cards[depend[now_point]['f']]);
-				sort_cards.push(this.cards[depend[now_point]['s']]);
+				this.cards[depend[now_point]['from']]['index'] = now_point;
+				sort_cards.push(this.cards[depend[now_point]['from']]);
+				sort_cards.push(this.cards[depend[now_point]['to']]);
 			} else {
-				sort_cards.push(this.cards[depend[now_point]['s']]);
+				sort_cards.push(this.cards[depend[now_point]['to']]);
 			}
 			
-			now_point = depend[now_point]['s'];
+			now_point = depend[now_point]['to'];
 		}
 
 		return sort_cards;
