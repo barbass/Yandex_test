@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8" />
+		<title>Фреймворк</title>
+		<script src="jsTest.js"></script>
+	</head>
+
+<body>
+	
+	<p id='p' class='error text warning' style='color:red;'>Ехал грека через реку</p>
+	<p class='error'>То ли еще будет</p>
+	<button id='hj' value='val'>gdgfd</button>
+<script type='text/javascript'>
+	hasClass = jsTest('#hj').hasClass('success');
+	
+	jsTest('#hj').addClass('success');
+	
+	jsTest('#p').css('color', 'black');
+	
+	jsTest('#hj').on('click', function(){
+		alert(5);
+	});
+	
+	jsTest('#hj').off('click');
+	
+	
+	value = jsTest('#hj').val();
+
+	text = jsTest('#p').text('Ехал грека');
+	
+	html = jsTest('#p').html();
+</script>
+	
+</body>
+
+
+
+</html>
