@@ -33,18 +33,18 @@
 				
 				traveler.destroy();
 				
-				/* Генерируем нужное количество */
+				// Генерируем нужное количество
 				for(var i=0; i<count; i++) {
 					cards.push(
 						{
 							'from': 'AAA'+i,
 							'to': 'AAA'+(i+1),
-							'seat': '5C',
+							'seat': i+'C',
 							'transport': 'airplane',
 							'options': {
 								'price': {
 									'name': 'Цена',
-									'description': '110р',
+									'description': (i+10)+'р',
 									'display': true,
 								},
 								'baggage': {
@@ -79,16 +79,6 @@
 				traveler.buildTravelCard();
 				document.querySelector('#parent_travel').style.display = 'block';
 			}, false);
-			
-			//traveler.getCards({'transport':'airplane', 'options':{'key':'price', 'description':'100р'}});
-			
-			//Добавление карточки в путешествие
-			/*try{
-				traveler.addCard({});
-			} catch(error) {
-				alert(error.message);
-			}*/
-			
 		}
 	</script>
 	

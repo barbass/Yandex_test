@@ -1,0 +1,9 @@
+Файлы traveler.js и traveler.html относятся к 1-ому заданию (файл Trip_Sorter.doc)
+
+Файлы  jsTest.js и jsTest.html относятся к 2-ому заданию (файл Trip_Sorter.doc)
+
+
+Запускается в обоих заданиях html-файл.
+
+
+Работа скриптов проверена в Mozilla FireFox 24.0 и Google Chrome 30.0
