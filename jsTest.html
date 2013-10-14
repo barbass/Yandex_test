@@ -10,27 +10,32 @@
 	
 	<p id='p' class='error text warning' style='color:red;'>Ехал грека через реку</p>
 	<p class='error'>То ли еще будет</p>
-	<button id='hj' value='val'>gdgfd</button>
-<script type='text/javascript'>
-	hasClass = jsTest('#hj').hasClass('success');
+	<button id='button' value='val'>Поехали</button>
 	
-	jsTest('#hj').addClass('success');
-	
-	jsTest('#p').css('color', 'black');
-	
-	jsTest('#hj').on('click', function(){
-		alert(5);
-	});
-	
-	jsTest('#hj').off('click');
-	
-	
-	value = jsTest('#hj').val();
+	<script type='text/javascript'>
+		hasClass = jsTest('#button').hasClass('success');
+		
+		jsTest('#button').addClass('success').addClass('success2');
+		
+		jsTest('#p').css('color', 'black');
+		function s() {alert('s');}
+		jsTest('#button').on('click', s);
+		jsTest('#button').on('click', function(){
+			alert(6);
+		});
+		jsTest('#button').on('mouseover', function(){
+			alert('hover');
+		});
+		
+		jsTest('#button').off('mouseover');
+		
+		
+		value = jsTest('#button').val();
 
-	text = jsTest('#p').text('Ехал грека');
-	
-	html = jsTest('#p').html();
-</script>
+		text = jsTest('#p').text('Ехал грека');
+		
+		html = jsTest('#p').html();
+	</script>
 	
 </body>
 

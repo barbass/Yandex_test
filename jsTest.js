@@ -8,7 +8,9 @@
 		selector: '',
 		context: '',
 		elements: [],
+		events: {},
 		
+		/* Поиск элемента в DOM-дереве */
 		init: function(selector, context) {
 			if (!selector) {
 				return this;
@@ -43,6 +45,10 @@
 			}
 		},
 		
+		/* Определение наличия класса
+		 * @param string
+		 * @return bool
+		 */
 		hasClass: function(className) {
 			var className = " " + className + " ";
 			var i = 0;
@@ -54,6 +60,10 @@
 			return false;
 		},
 		
+		/* Добавление класса элементу
+		 * @param string
+		 * @return object
+		 * */
 		addClass: function(className) {
 			if (this.hasClass(className)) {
 				return this;
@@ -79,6 +89,10 @@
 			return this;
 		},
 		
+		/* Удаление класса элемента
+		 * @param string
+		 * @return object
+		 * */
 		removeClass: function(className) {
 			if (this.length == 0) {
 				return this;
@@ -109,6 +123,10 @@
 			return this;
 		},
 		
+		/* Добавление css-свойств элементу
+		 * @param string, string
+		 * @return string в случае пустых @param | object
+		 * */
 		css: function(name, value) {
 			var vals;
 			
@@ -135,6 +153,10 @@
 			return (vals) ? vals : this;
 		},
 		
+		/* Добавление события на элемент
+		 * @param string, function
+		 * @return object
+		 * */
 		on: function(type, fn) {
 			if (!type || !fn) {
 				return this;
@@ -143,6 +165,14 @@
 			for(var i=0; i<this.length; i++) {
 				var elem = this.elements[i];
 				if (elem.addEventListener) {
+					if (!this.events[elem]) {
+						this.events[elem] = {};
+					}
+					if (!this.events[elem][type]) {
+						this.events[elem][type] = [];
+					}
+				
+					this.events[elem][type].push(fn);
 					elem.addEventListener(type, fn, false);
 				} else {
 					continue;
@@ -151,22 +181,49 @@
 			return this;
 		},
 		
+		/* Удаления события элемента
+		 * @param string, function
+		 * @return object
+		 * */
 		off: function(type, fn) {
-			if (!type) {
-				return this;
-			}
-			
 			for(var i=0; i<this.length; i++) {
 				var elem = this.elements[i];
-				if (elem.removeEventListener) {
-					elem.removeEventListener(type, fn, false);
-				} else {
+				if (!elem.removeEventListener) {
 					continue;
 				}
+
+				if (!type) {
+					for(var key in this.events[elem]) {
+						this.off(key);
+					}
+					continue;
+				}
+				
+				if (!this.events[elem][type]) {
+					continue;
+				}
+				
+				for(var k=0; k<this.events[elem][type].length; k++) {
+					if (typeof(fn) !== 'undefined') {
+						if (fn === this.events[elem][type][k]) {
+							elem.removeEventListener(type, this.events[elem][type][k], false);
+							break;
+						} else {
+							continue;
+						}
+					} else {
+						elem.removeEventListener(type, this.events[elem][type][k], false);
+					}
+				}
+
 			}
 			return this;
 		},
 		
+		/* Получение значения атрибута value элемента
+		 * @param string
+		 * @return string или array (в зависимости от количества найденных элементов) в случае пустого @param | object
+		 * */
 		val: function(value) {
 			var vals;
 			
@@ -193,6 +250,10 @@
 			return (vals) ? vals : this;
 		},
 		
+		/* Получение текстового содержимого элемента
+		 * @param string
+		 * @return string или array (в зависимости от количества найденных элементов) в случае пустого @param | object
+		 * */
 		text: function(value) {
 			var vals;
 			
@@ -219,6 +280,10 @@
 			return (vals) ? vals : this;
 		},
 		
+		/* Получение html-содержимого элемента
+		 * @param string
+		 * @return string или array (в зависимости от количества найденных элементов) в случае пустого @param | object
+		 * */
 		html: function(value) {
 			var vals;
 			
